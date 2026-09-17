@@ -1,0 +1,9 @@
+2026-09-17 14:00:01 UTC [INFO] [DEPLOY] Starting release v2.4 deployment pipeline on production cluster prod-useast1
+2026-09-17 14:00:15 UTC [INFO] [DEPLOY] Pulling container image registry.internal/monarch/checkout-service:v2.4 (sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855)
+2026-09-17 14:00:45 UTC [INFO] [MIGRATION] Running Alembic DB migration #847: update_checkout_pools.py
+2026-09-17 14:01:10 UTC [INFO] [MIGRATION] Migration #847 applied successfully: updated max_pool_size=50, max_overflow=0
+2026-09-17 14:01:30 UTC [INFO] [K8S] Rolling update started: 8 instances of checkout-service replacing v2.3
+2026-09-17 14:02:00 UTC [INFO] [DEPLOY] All 8 pods of checkout-service:v2.4 initialized. Health checks reporting HTTP 200 OK.
+2026-09-17 14:02:15 UTC [INFO] [DEPLOY] Traffic router switched 100% ingress traffic to checkout-service:v2.4
+2026-09-17 14:02:30 UTC [INFO] [DEPLOY] Deployment v2.4 completed successfully in 2m 29s.
+2026-09-17 14:03:00 UTC [INFO] [MONITOR] Post-deployment health check passing. Initial latency P95: 180ms.

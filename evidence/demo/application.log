@@ -1,0 +1,11 @@
+2026-09-17 14:02:35 UTC [INFO] [app.checkout] User checkout request received user_id=9401 cart_id=c841
+2026-09-17 14:03:10 UTC [INFO] [app.checkout] Payment intent confirmed order_id=ord_91823 status=SUCCESS
+2026-09-17 14:04:12 UTC [WARN] [app.db] Database pool usage elevated: 38/50 active connections held
+2026-09-17 14:05:00 UTC [WARN] [app.db] Database connection acquisition latency exceeded 1500ms (P99=2800ms)
+2026-09-17 14:06:30 UTC [WARN] [app.db] Database pool usage critical: 49/50 active connections held
+2026-09-17 14:07:55 UTC [ERROR] [app.checkout] ConnectionPoolTimeoutException: Timeout waiting for connection from pool (max_pool_size=50, max_overflow=0) after 5000ms at line 18392
+2026-09-17 14:08:00 UTC [ERROR] [app.checkout] HTTP 500 Internal Server Error returned on POST /v1/checkout user_id=10294 error="Database connection pool exhausted"
+2026-09-17 14:08:05 UTC [ERROR] [app.checkout] HTTP 500 Internal Server Error returned on POST /v1/checkout user_id=10295 error="Database connection pool exhausted"
+2026-09-17 14:08:15 UTC [ERROR] [app.checkout] HTTP 500 Internal Server Error returned on POST /v1/checkout rate=84% failures
+2026-09-17 14:10:00 UTC [FATAL] [app.gateway] Circuit breaker tripped for checkout-service: 142 failed requests in 60s window
+2026-09-17 14:15:00 UTC [INFO] [app.alerts] PagerDuty Incident INC-042 triggered by metric alert: Checkout Failure Rate > 15%

@@ -1,0 +1,11 @@
+2026-09-17 14:01:10 UTC [LOG]  statement: ALTER SYSTEM SET max_connections = '50';
+2026-09-17 14:01:12 UTC [LOG]  parameter "max_connections" changed to "50"
+2026-09-17 14:02:40 UTC [LOG]  connection received: host=10.0.4.12 port=48122
+2026-09-17 14:04:05 UTC [LOG]  connection count reached 35 (max 50)
+2026-09-17 14:05:22 UTC [LOG]  connection count reached 45 (max 50)
+2026-09-17 14:07:45 UTC [LOG]  connection count reached 50 (max 50)
+2026-09-17 14:07:50 UTC [FATAL] remaining connection slots are reserved for non-replication superuser connections (line 4821)
+2026-09-17 14:07:52 UTC [ERROR] PostgreSQL backend server process (PID 19283) exited with exit code 1 due to connection pool saturation
+2026-09-17 14:08:00 UTC [FATAL] sorry, too many clients already (max_connections=50)
+2026-09-17 14:08:02 UTC [FATAL] sorry, too many clients already (max_connections=50)
+2026-09-17 14:08:10 UTC [FATAL] sorry, too many clients already (max_connections=50)
