@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MONARCH // AI Incident Investigator Workstation</title>
+  <link rel="stylesheet" href="/static/style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <!-- Ambient Animated Cyber Grid Background -->
+  <div class="ambient-bg-container">
+    <div class="cyber-grid"></div>
+    <div class="glow-orb orb-1"></div>
+    <div class="glow-orb orb-2"></div>
+    <div class="glow-orb orb-3"></div>
+  </div>
+
+  <div id="app-container">
+    <!-- Top Header Telemetry & AWS Bar -->
+    <header class="cyber-header">
+      <div class="brand">
+        <div class="brand-icon-wrapper">
+          <div class="brand-icon">👑</div>
+          <div class="brand-glow"></div>
+        </div>
+        <div class="brand-info">
+          <div class="brand-title">MONARCH <span class="version-tag">PRO 9.5</span></div>
+          <div class="brand-subtitle">// AI INCIDENT INVESTIGATOR & FORENSIC WORKSTATION</div>
+        </div>
+      </div>
+      
+      <div class="header-telemetry">
+        <!-- 1-Click Demo Incident Ingestion Action -->
+        <button class="btn-demo-glow" id="btn-load-demo" title="Auto-load 5 synthetic evidence files for INC-042 (Checkout Failures)">
+          <span class="btn-sparkle">⚡</span> LOAD DEMO INCIDENT (INC-042)
+        </button>
+
+        <div class="telemetry-pill" id="aws-s3-pill">
+          <span class="pill-dot neon-cyan"></span>
+          <span class="pill-label">AWS S3:</span>
+          <strong class="pill-value">s3://monarch-evidence</strong>
+        </div>
+
+        <div class="telemetry-pill" id="cloudwatch-pill">
+          <span class="pill-dot neon-emerald"></span>
+          <span class="pill-label">CLOUDWATCH:</span>
+          <strong class="pill-value">Active</strong>
+        </div>
+
+        <div class="telemetry-pill" id="model-tag">
+          <span class="pill-dot neon-purple"></span>
+          <span class="pill-label">LLM:</span>
+          <strong id="model-name-text" class="pill-value">llama-3.3-70b</strong>
+        </div>
+
+        <div class="status-badge-live" id="system-health-pill">
+          <div class="live-pulse"></div>
+          <span id="health-status-text">INVESTIGATOR READY</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main 3-Column Command Workbench Layout -->
+    <div class="main-layout">
+      
+      <!-- COLUMN 1: LEFT EVIDENCE DRAWER & CORPUS -->
+      <aside class="sidebar-nav">
+        <div class="card-header-sm highlight">
+          <span class="icon">📂</span> INCIDENT EVIDENCE CORPUS
+        </div>
+
+        <!-- Ingested Evidence Files List -->
+        <div class="cyber-card sidebar-card flex-1">
+          <div class="card-header-flex">
+            <span class="card-title-sm">EVIDENCE SOURCES (<span id="evidence-count-badge">5</span>)</span>
+            <button class="btn-refresh-sm" id="btn-refresh-evidence">🔄 Refresh</button>
+          </div>
+
+          <div class="evidence-files-list" id="evidence-files-list">
+            <!-- Populated dynamically or preloaded demo files -->
+            <div class="evidence-file-item" data-file="deployment.log">
+              <div class="file-icon">📄</div>
+              <div class="file-meta">
+                <div class="file-name">deployment.log <span class="eid-tag">E001</span></div>
+                <div class="file-sub">1,000 lines | Deploy v2.4</div>
+              </div>
+            </div>
+
+            <div class="evidence-file-item" data-file="application.log">
+              <div class="file-icon">📄</div>
+              <div class="file-meta">
+                <div class="file-name">application.log <span class="eid-tag">E002</span></div>
+                <div class="file-sub">5,000 lines | HTTP 500</div>
+              </div>
+            </div>
+
+            <div class="evidence-file-item" data-file="database.log">
+              <div class="file-icon">📄</div>
+              <div class="file-meta">
+                <div class="file-name">database.log <span class="eid-tag">E003</span></div>
+                <div class="file-sub">2,000 lines | Pool 50/50</div>
+              </div>
+            </div>
+
+            <div class="evidence-file-item" data-file="incident_report.md">
+              <div class="file-icon">📝</div>
+              <div class="file-meta">
+                <div class="file-name">incident_report.md <span class="eid-tag">E004</span></div>
+                <div class="file-sub">6 pages | Network Audit</div>
+              </div>
+            </div>
+
+            <div class="evidence-file-item" data-file="monitoring_dashboard.png">
+              <div class="file-icon">🖼️</div>
+              <div class="file-meta">
+                <div class="file-name">monitoring_dashboard.png <span class="eid-tag">E005</span></div>
+                <div class="file-sub">Vision OCR | Connection Spike</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Quick Evidence Dropzone -->
+        <div class="cyber-card sidebar-card">
+          <div class="card-header-sm"><span class="icon">📥</span> UPLOAD EVIDENCE FILE</div>
+          <div class="sidebar-dropzone" id="sidebar-dropzone">
+            <span class="drop-text">Drag & drop log, PDF or screenshot</span>
+            <input type="file" id="sidebar-file-input" style="display:none;" accept=".log,.txt,.pdf,.md,.png,.jpg">
+            <button class="btn-cyber-secondary-sm" id="btn-browse-file">Choose File</button>
+          </div>
+        </div>
+
+        <!-- User Scope -->
+        <div class="cyber-card sidebar-card">
+          <div class="input-field-group">
+            <label>Investigator Scope</label>
+            <input type="text" id="user-id-input" class="cyber-input" value="sre_admin" placeholder="user_id...">
+          </div>
+        </div>
+      </aside>
+
+      <!-- COLUMN 2: CENTER INVESTIGATION CANVAS -->
+      <main class="workbench-canvas">
+        <section class="view-panel active" id="chat-view">
+          
+          <!-- Agent Pipeline Stepper Bar -->
+          <div class="agent-stepper-bar" id="agent-stepper">
+            <div class="step-chip step-done" id="step-router">
+              <span class="step-num">1</span> <span class="step-label">Router</span>
+            </div>
+            <div class="step-line"></div>
+            <div class="step-chip step-done" id="step-log">
+              <span class="step-num">2</span> <span class="step-label">Log Analyst</span>
+            </div>
+            <div class="step-line"></div>
+            <div class="step-chip step-done" id="step-rag">
+              <span class="step-num">3</span> <span class="step-label">RAG Researcher</span>
+            </div>
+            <div class="step-line"></div>
+            <div class="step-chip step-done" id="step-vision">
+              <span class="step-num">4</span> <span class="step-label">Vision Analyst</span>
+            </div>
+            <div class="step-line"></div>
+            <div class="step-chip step-done" id="step-fusion">
+              <span class="step-num">5</span> <span class="step-label">Evidence Fusion</span>
+            </div>
+            <div class="step-line"></div>
+            <div class="step-chip step-done" id="step-critic">
+              <span class="step-num">6</span> <span class="step-label">Contradiction Audit</span>
+            </div>
+            <div class="step-line"></div>
+            <div class="step-chip step-done" id="step-verifier">
+              <span class="step-num">7</span> <span class="step-label">Reflection & Verifier</span>
+            </div>
+          </div>
+
+          <!-- Messages & Investigation Results Container -->
+          <div class="messages-container" id="messages-container">
+            
+            <!-- Hero Welcome / Incident Banner -->
+            <div class="hero-welcome-card">
+              <div class="welcome-badge">INCIDENT INVESTIGATION COMMAND CENTER</div>
+              <h2>Monarch AI Incident Investigator</h2>
+              <p>Monarch analyzes messy production evidence across logs, documents, and screenshots to produce a verified, traceable root-cause report.</p>
+              
+              <div class="preset-triggers">
+                <span class="preset-label">DEMO PRESET:</span>
+                <button class="preset-chip" id="preset-query-btn">
+                  🔍 "Why did checkout start failing after deployment v2.4?"
+                </button>
+              </div>
+            </div>
+
+            <!-- Initial Assistant Bubble -->
+            <div class="message-bubble assistant">
+              <div class="avatar-box">
+                <div class="avatar">👑</div>
+                <div class="avatar-glow"></div>
+              </div>
+              <div class="content-box">
+                <div class="message-header-row">
+                  <span class="route-badge planner">Route: Incident Investigator</span>
+                  <span class="message-time">Ready</span>
+                </div>
+                <div class="message-text">
+                  Welcome, SRE. I am ready to investigate your production incidents. Click <strong>"LOAD DEMO INCIDENT (INC-042)"</strong> above or upload logs to reconstruct the timeline and verify the root cause.
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Futuristic Composer Input Bar -->
+          <div class="composer-container">
+            <form class="composer-form" id="chat-form">
+              <button type="button" id="attach-image-btn" class="btn-attach-image" title="Attach Screenshot for Vision Analysis">
+                <span class="icon">🖼️</span>
+              </button>
+              <input type="file" id="chat-image-input" style="display: none;" accept=".png,.jpg,.jpeg">
+              
+              <div class="textarea-wrapper">
+                <textarea id="chat-input" class="cyber-textarea" placeholder="Ask Monarch to investigate an incident or query evidence..." rows="1"></textarea>
+              </div>
+
+              <button type="submit" class="btn-send-prompt" id="send-btn">
+                <span>INVESTIGATE</span>
+                <span class="send-arrow">➤</span>
+              </button>
+            </form>
+          </div>
+
+          <!-- BOTTOM INTERACTIVE INCIDENT TIMELINE -->
+          <div class="timeline-bottom-drawer" id="timeline-drawer">
+            <div class="timeline-drawer-header">
+              <span class="timeline-title">⏱️ RECONSTRUCTED INCIDENT TIMELINE AUDIT (INC-042)</span>
+              <span class="timeline-sub">Click any node to inspect evidence citation</span>
+            </div>
+            
+            <div class="timeline-nodes-scrubber" id="timeline-scrubber">
+              <div class="t-node" data-eid="E001" data-time="14:02 UTC">
+                <div class="t-dot green"></div>
+                <div class="t-time">14:02 UTC</div>
+                <div class="t-desc">Deployment v2.4 finished</div>
+                <div class="t-file">deployment.log</div>
+              </div>
+              <div class="t-connector"></div>
+
+              <div class="t-node" data-eid="E005" data-time="14:04 UTC">
+                <div class="t-dot yellow"></div>
+                <div class="t-time">14:04 UTC</div>
+                <div class="t-desc">DB conns jump (38/50)</div>
+                <div class="t-file">monitoring.png</div>
+              </div>
+              <div class="t-connector"></div>
+
+              <div class="t-node" data-eid="E003" data-time="14:07 UTC">
+                <div class="t-dot red"></div>
+                <div class="t-time">14:07 UTC</div>
+                <div class="t-desc">Connection Pool Exhausted (50/50)</div>
+                <div class="t-file">database.log:4821</div>
+              </div>
+              <div class="t-connector"></div>
+
+              <div class="t-node" data-eid="E002" data-time="14:08 UTC">
+                <div class="t-dot red"></div>
+                <div class="t-time">14:08 UTC</div>
+                <div class="t-desc">Checkout HTTP 500 (84%)</div>
+                <div class="t-file">application.log:18392</div>
+              </div>
+              <div class="t-connector"></div>
+
+              <div class="t-node" data-eid="E004" data-time="14:15 UTC">
+                <div class="t-dot purple"></div>
+                <div class="t-time">14:15 UTC</div>
+                <div class="t-desc">PagerDuty Alert INC-042</div>
+                <div class="t-file">incident_report.md</div>
+              </div>
+            </div>
+          </div>
+
+        </section>
+      </main>
+
+      <!-- COLUMN 3: RIGHT CONTRADICTION & REFLECTION AUDIT DRAWER -->
+      <aside class="inspector-drawer">
+        <div class="drawer-header">
+          <div class="drawer-title">// CONTRADICTION & REFLECTION AUDIT</div>
+          <div class="drawer-pulse"></div>
+        </div>
+
+        <!-- 1. Competing Hypotheses & Contradictions Panel -->
+        <div class="cyber-card inspector-card">
+          <div class="inspector-card-title">⚖️ COMPETING HYPOTHESES & CONTRADICTIONS</div>
+          <div id="hypotheses-list-box">
+            <div class="hypothesis-card primary">
+              <div class="hyp-header">
+                <span class="hyp-name">Hypothesis A: DB Connection Pool Exhaustion</span>
+                <span class="status-verified">VERIFIED</span>
+              </div>
+              <div class="hyp-counts">Supporting: <strong>4</strong> | Contradicting: <strong>0</strong></div>
+            </div>
+
+            <div class="hypothesis-card disproved">
+              <div class="hyp-header">
+                <span class="hyp-name">Hypothesis B: External Network Outage</span>
+                <span class="status-disproved">DISPROVED</span>
+              </div>
+              <div class="hyp-counts">Supporting: <strong>1</strong> | Contradicting: <strong>2</strong></div>
+            </div>
+          </div>
+
+          <div class="contradiction-alert-box" id="contradiction-alert-box">
+            <div class="alert-title">⚠️ CONFLICTING EVIDENCE RESOLVED</div>
+            <div class="alert-body">
+              Network telemetry disproved initial network outage hypothesis (< 2ms latency, 0% packet loss in incident_report.md).
+            </div>
+          </div>
+        </div>
+
+        <!-- 2. Reflection Self-Correction Audit -->
+        <div class="cyber-card inspector-card">
+          <div class="inspector-card-title">🔄 REFLECTION SELF-CORRECTION TRACE</div>
+          <div class="reflection-trace-body" id="reflection-trace-box">
+            <div class="ref-step">
+              <div class="ref-num">1</div>
+              <div class="ref-info">
+                <strong>Initial Hypothesis</strong>
+                <p>Suspected general database latency spike.</p>
+              </div>
+            </div>
+            <div class="ref-step">
+              <div class="ref-num">2</div>
+              <div class="ref-info">
+                <strong>Critic Review</strong>
+                <p>Audited deployment migration #847 & connection pool parameters.</p>
+              </div>
+            </div>
+            <div class="ref-step">
+              <div class="ref-num">3</div>
+              <div class="ref-info">
+                <strong>Verified Conclusion</strong>
+                <p>Confirmed connection pool exhaustion (max_pool_size=50 reached at 14:07).</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 3. Report Action Card -->
+        <div class="cyber-card inspector-card">
+          <div class="inspector-card-title">📄 EXECUTIVE INCIDENT REPORT</div>
+          <p class="report-desc">Generate a traceable, verified incident report with citations & confidence score.</p>
+          <button class="btn-cyber-primary" id="btn-generate-report">
+            <span>📄 GENERATE INCIDENT REPORT</span>
+          </button>
+        </div>
+      </aside>
+
+    </div>
+  </div>
+
+  <!-- EVIDENCE & REPORT MODAL OVERLAY -->
+  <div class="modal-backdrop" id="report-modal" style="display:none;">
+    <div class="modal-card">
+      <div class="modal-header">
+        <span class="modal-title">📄 MONARCH EXECUTIVE INCIDENT REPORT (INC-042)</span>
+        <button class="btn-close-modal" id="btn-close-modal">✕</button>
+      </div>
+      <div class="modal-body">
+        <textarea id="report-md-content" class="cyber-textarea modal-textarea" readonly></textarea>
+      </div>
+      <div class="modal-footer">
+        <span class="modal-s3-path" id="modal-s3-path">s3://monarch-evidence-bucket/reports/inc-042.md</span>
+        <button class="btn-cyber-primary-sm" id="btn-copy-report">📋 COPY MARKDOWN</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>
